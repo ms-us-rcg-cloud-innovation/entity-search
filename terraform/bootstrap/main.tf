@@ -30,17 +30,21 @@ variable "name" {
   type    = string
   default = "entitysearch"
 }
+variable "location" {
+  type    = string
+  default = "eastus"
+}
 
 # Create a Resource Group
 resource "azurerm_resource_group" "tfstate" {
-  name     = "${var.resource-prefix}-tfstate"
+  name     = "${var.name}-tfstate"
   location = var.location
 }
 
 # Use the resource group to create a storage account.
 # This storage account will hold the terraform state for the main terraform scripts in the /terraform root directory
 resource "azurerm_storage_account" "tfstate" {
-  name                     = "${var.resource-prefix}tfstate${random_string.tfstate.result}"
+  name                     = "${var.name}tfstate${random_string.tfstate.result}"
   resource_group_name      = azurerm_resource_group.tfstate.name
   location                 = azurerm_resource_group.tfstate.location
   account_tier             = "Standard"
