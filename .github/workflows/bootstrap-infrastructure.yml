@@ -13,14 +13,6 @@ on:
 jobs:
   deploy:
 
-    # environment variables used in this job
-    # load the variables from the github secrets
-    env: 
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-    
     # the type of runner the job will use
     runs-on: ubuntu-latest
 
@@ -47,6 +39,14 @@ jobs:
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color
+
+    # Login to azure using the credentials
+    # see https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Cwindows#use-the-azure-login-action-with-a-service-principal-secret
+    - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+          enable-AzPSSession: true
 
     # Deploy Terraform
     - name: Terraform Apply
