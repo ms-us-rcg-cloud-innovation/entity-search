@@ -52,7 +52,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -var="location=${{ secrets.LOCATION }}" 
+        run: terraform plan -no-color
                
   deploy-prod:
     runs-on: 'ubuntu-latest'
@@ -74,4 +74,4 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply --auto-approve -var="location=${{secrets.LOCATION}}"
+        run: terraform apply --auto-approve 

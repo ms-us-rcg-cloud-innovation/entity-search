@@ -51,5 +51,5 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -var="location=${{ secrets.LOCATION }}" 
+        run: terraform plan -no-color
        
