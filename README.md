@@ -14,6 +14,8 @@ The asset consists of the following artifacts
 
 The following secrets must be added to the pipeline. Documentation for adding secrets specific to azure and github actions can be found [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
 
+Make sure to set the scope of the permissions to the subscription. 
+
 ```
 ARM_CLIENT_ID
 ARM_CLIENT_SECRET
@@ -24,12 +26,6 @@ ARM_TENANT_ID
 ### Create Secrets in the GitHub UI
 
 Follow the documentation here to create the secrets above: https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository
-
-### Create Service Principal in the Azure Portal
-
-Follow the documentation here to create a service principal in the azure portal https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal
-
-You can also use the azure cli `az ad sp create-for-rbac` as outlined in the following guide: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret
 
 ## Installation
 
