@@ -16,12 +16,7 @@ The following secrets must be added to the pipeline. Documentation for adding se
 
 Make sure to set the scope of the permissions to the subscription. 
 
-```
-ARM_CLIENT_ID
-ARM_CLIENT_SECRET
-ARM_SUBSCRIPTION_ID 
-ARM_TENANT_ID
-```
+![](docs/images/github-secrets-list.png)
 
 ### Create Secrets in the GitHub UI
 
@@ -43,9 +38,25 @@ Terraform is used within the pipelines and requires bootstrapping in the azure e
 # modify variables in the terraform/bootstrap/terraform.tfvars to change, for example, the resource prefix
 vi terraform/bootstrap/terraform.tfvars
 
+# update the repository so the github action can see the updates
+git add -A
+git commit -m"updated resource prefix"
+git push origin main
+
 # this is run from the repository root
 gh workflow run .github/workflows/bootstrap-infrastructure.yml
 ```
+
+After bootstrap has completed, the job will create a storage account in a resource group. You can find the resource group and storage account name in the log output for the bootstrap job run. 
+
+Open the storage account name in the azure portal and set the TFSTATE_* environment variables to the following:
+
+| Secret | Value to Use |
+|---|---|
+| TFSTATE_STORAGE_ACCOUNT_NAME | the storage account name created during the bootstrap job run | 
+| TFSTATE_STORAGE_CONTAINER_NAME| 'tfstate' |
+| TFSTATE_KEY | the key in the storage account 'access keys' section |
+| TFSTATE_RESOURCES_GROUP_NAME | the name of the resource group created during the bootstrap job run |
 
 > validate and deploy
 
@@ -54,6 +65,7 @@ gh workflow run .github/workflows/bootstrap-infrastructure.yml
 vi terraform/terraform.tfvars
 git add -A
 git commit -m"updated resource prefix"
+git push origin main
 
 # manually validate the infrastructure
 gh workflow run .github/workflows/validate-infrastructure.yml
