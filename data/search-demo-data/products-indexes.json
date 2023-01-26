@@ -1,0 +1,156 @@
+{
+    "name": "products-index",
+    "defaultScoringProfile": "",
+    "fields": [
+      {
+        "name": "id",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "retrievable": true,
+        "sortable": false,
+        "facetable": false,
+        "key": true,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      },
+      {
+        "name": "NewProductNumber",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      },
+      {
+        "name": "ProductNumber",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      },
+      {
+        "name": "ProductName",
+        "type": "Edm.String",
+        "searchable": true,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": "standard.lucene",
+
+        "synonymMaps": []
+      },
+      {
+        "name": "ModelName",
+        "type": "Edm.String",
+        "searchable": true,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": "standard.lucene",
+
+        "synonymMaps": []
+      },
+      {
+        "name": "MakeFlag",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      },
+      {
+        "name": "StandardCost",
+        "type": "Edm.Double",
+        "searchable": false,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      },
+      {
+        "name": "ListPrice",
+        "type": "Edm.Double",
+        "searchable": false,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      },
+      {
+        "name": "SubCategoryID",
+        "type": "Edm.Int32",
+        "searchable": false,
+        "filterable": true,
+        "retrievable": false,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      },
+      {
+        "name": "rid",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "retrievable": true,
+        "sortable": false,
+        "facetable": false,
+        "key": false,
+        "indexAnalyzer": null,
+        "searchAnalyzer": null,
+        "analyzer": null,
+
+        "synonymMaps": []
+      }
+    ]
+  }
