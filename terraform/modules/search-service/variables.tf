@@ -9,3 +9,15 @@ variable "resource_group_name" {
 variable "location" {
   type = string
 }
+
+variable "index_definition_file" {
+  type = string
+}
+
+variable "datasource_definition_file" {
+  type = string
+}
+
+variable "indexer_definition_file" {
+  type = string
+}

@@ -1,0 +1,11 @@
+{   
+    "name" : "products-datasource",  
+    "description" : "Adventureworks CosmosDB data source",  
+    "type" : "cosmosdb",
+    "credentials" : { 
+        "connectionString" : "%ADVENTURWORKS_PRODUCTS_DB%" 
+    },
+    "container": {
+        "name": "products"
+    }
+}  

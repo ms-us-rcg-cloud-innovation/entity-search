@@ -1,0 +1,12 @@
+{   
+    "name" : "products-indexer",  
+    "description" : "Indexer for adventureworks products", 
+    "dataSourceName" : "products-datasource", 
+    "targetIndexName" : "products-index",  
+    "disabled" : false,
+    "schedule" : {
+        "interval": "P1D",
+        "startTime": "2023-01-01T00:00:00Z"
+    },  
+    "cache": null
+} 

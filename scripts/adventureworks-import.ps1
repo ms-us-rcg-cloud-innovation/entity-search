@@ -54,7 +54,7 @@ Submit-PromptUntilYesOrNoInput "Install required modules (y/n)?" {
 }
 
 Submit-PromptUntilYesOrNoInput "Import CSV sample file (y/n)?" {
-    $adventureProducts = Import-Csv -Path "../data/adventureworks-products.csv"      
+    $adventureProducts = Import-Csv -Path "../data/search-demo/adventureworks-products.csv"      
     if($adventureProducts.Length -gt 0) {
         $cosmosContext = New-CosmosDbContext -Account $cosmosAccountName -Database $cosmosDatabase -ResourceGroupName $resourceGroupName
         $index = 0
