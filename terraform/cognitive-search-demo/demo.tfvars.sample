@@ -1,0 +1,8 @@
+uniquefy = true
+location = "eastus2"
+resource_group_name = "azure-search-e2"
+cosmos_account_name = "contoso"
+database_name = "adventureworks"
+container_name = "products"
+partition_key_path = "/id"
+search_service_name = "contoso-search"

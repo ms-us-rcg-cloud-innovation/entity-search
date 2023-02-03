@@ -7,6 +7,5 @@
     "schedule" : {
         "interval": "P1D",
         "startTime": "2023-01-01T00:00:00Z"
-    },  
-    "cache": null
+    }
 } 

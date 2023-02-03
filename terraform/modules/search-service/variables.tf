@@ -21,3 +21,7 @@ variable "datasource_definition_file" {
 variable "indexer_definition_file" {
   type = string
 }
+
+variable "cosmosdb_connectionstring" {
+  type = string
+}

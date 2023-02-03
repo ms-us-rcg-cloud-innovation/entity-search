@@ -11,7 +11,7 @@ resource "azurerm_search_service" "search" {
       "pwsh", "-Command"
     ]
     environment = {
-      AZSEARCH_ADMIN_KEY      = azurerm_search_service.search.primary_key
+      AZSEARCH_ADMIN_KEY = azurerm_search_service.search.primary_key
     }
   }
 
@@ -22,19 +22,19 @@ resource "azurerm_search_service" "search" {
       "pwsh", "-Command"
     ]
     environment = {
-      AZSEARCH_ADMIN_KEY      = azurerm_search_service.search.primary_key
-      COSMOS_DB               = var.cosmos_db_connectionstring
+      AZSEARCH_ADMIN_KEY        = azurerm_search_service.search.primary_key
+      ADVENTURWORKS_PRODUCTS_DB = var.cosmosdb_connectionstring
     }
   }
 
-    provisioner "local-exec" {
+  provisioner "local-exec" {
     # indexer provisioner
     command = "${path.module}/_provisioner.ps1 -ServiceName ${azurerm_search_service.search.name} -DefinitionFile '${var.indexer_definition_file}' -APIVersion '2020-06-30' -ResourceType Indexer"
     interpreter = [
       "pwsh", "-Command"
     ]
     environment = {
-      AZSEARCH_ADMIN_KEY      = azurerm_search_service.search.primary_key
+      AZSEARCH_ADMIN_KEY = azurerm_search_service.search.primary_key
     }
     on_failure = continue
   }

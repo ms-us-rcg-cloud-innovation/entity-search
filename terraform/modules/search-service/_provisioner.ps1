@@ -100,7 +100,7 @@ $definition = $null
 #try to read content of given file
 if (TryGet-FileContent -FilePath $DefinitionFile -Content ([ref]$definition)) {
     if($ResourceType.ToLower() -eq "datasource") {
-        $definition = $definition.Replace('%COSMOS_DB%', $env:COSMOS_DB)
+        $definition = $definition.Replace('%ADVENTURWORKS_PRODUCTS_DB%', $env:ADVENTURWORKS_PRODUCTS_DB)
     }
         
     $resource = Write-Output $definition | ConvertFrom-Json -Depth 15
