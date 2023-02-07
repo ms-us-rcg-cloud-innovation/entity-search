@@ -20,28 +20,35 @@ variable "cosmos_account_name" {
 
 variable "search_service_name" {
   type = string
+  description = "Name of the Azure service"
 }
 
 variable "database_name" {
   type = string
+  description = "Name of database to be created in Cosmos"
 }
 
 variable "container_name" {
   type = string
+  description = "Name of initial container in database"
 }
 
 variable "partition_key_path" {
   type = string
+  description = "Partition key for the container. Must be in format '/<key>'. Ex: /id"
 }
 
 variable "index_definition_file" {
   type = string
+  description = "Index definition file to be used by Search service. This file declares all the indexed fieds of your data"
 }
 
 variable "datasource_definition_file" {
   type = string
+  description = "Data Source for your data. This includes connection and container details"
 }
 
 variable "indexer_definition_file" {
   type = string
+  description = "Indexer definition for crawling and indexing data in your data source. Indexer description must use the defined indexes from your index file"
 }
