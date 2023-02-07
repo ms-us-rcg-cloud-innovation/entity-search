@@ -22,8 +22,8 @@ resource "azurerm_search_service" "search" {
       "pwsh", "-Command"
     ]
     environment = {
-      AZSEARCH_ADMIN_KEY        = azurerm_search_service.search.primary_key
-      ADVENTURWORKS_PRODUCTS_DB = var.cosmosdb_connectionstring
+      AZSEARCH_ADMIN_KEY = azurerm_search_service.search.primary_key
+      COSMOS_DB          = var.cosmosdb_connectionstring
     }
   }
 

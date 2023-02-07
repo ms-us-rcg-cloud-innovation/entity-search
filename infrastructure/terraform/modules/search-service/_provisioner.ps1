@@ -83,39 +83,58 @@ function New-AzSearchResource([string] $Uri, [string] $Definition) {
         Exit 1
     }  
 }
+$scriptPath = $MyInvocation.MyCommand.path
+$dir = Split-Path $scriptPath
 
-$endpointMap = @{
-    "index" = "indexes"   
-    "datasource" = "datasources"
-    "indexer" = "indexers" 
-}
+# move to script location
+Push-Location $dir
 
-$endpoint = $endpointMap[$ResourceType.ToLower()]
+try
+{
+    Write-Host -ForegroundColor Yellow "Pushed dir location $dir"
 
-$apiVersionParam = "api-version=$APIVersion "#2020-06-30"
-$serviceUri = [string]::Format("https://{0}.search.windows.net/$($endpoint)", $ServiceName)
-
-$definition = $null
-
-#try to read content of given file
-if (TryGet-FileContent -FilePath $DefinitionFile -Content ([ref]$definition)) {
-    if($ResourceType.ToLower() -eq "datasource") {
-        $definition = $definition.Replace('%ADVENTURWORKS_PRODUCTS_DB%', $env:ADVENTURWORKS_PRODUCTS_DB)
+    $endpointMap = @{
+        "index" = "indexes"   
+        "datasource" = "datasources"
+        "indexer" = "indexers" 
     }
-        
-    $resource = Write-Output $definition | ConvertFrom-Json -Depth 15
+
+    $endpoint = $endpointMap[$ResourceType.ToLower()]
+
+    $apiVersionParam = "api-version=$APIVersion "#2020-06-30"
+    $serviceUri = [string]::Format("https://{0}.search.windows.net/$($endpoint)", $ServiceName)
+
+    $definition = $null
     
-    $response = $null
-    # check if index exists -- if it exists we'll perform a PUT vs POST
-            
-    if (Assert-ResourceExists -Uri "$serviceUri/$($resource.name)?$apiVersionParam" -ServiceName $serviceName) {
-        Write-Host -ForegroundColor DarkYellow "Resource $($resource.name) already exists, proceeding with update!"
-        $response = Update-AzSearchResource -Uri "$($serviceUri)/$(resource.name)?$apiVersionParam" -Definition $definition
+    #try to read content of given file
+    if (TryGet-FileContent -FilePath $DefinitionFile -Content ([ref]$definition)) {
+        if($ResourceType.ToLower() -eq "datasource") {
+            $definition = $definition.Replace('%COSMOS_DB%', $env:COSMOS_DB)
+        }
+        
+        Write-Host -ForegroundColor blue $definition
+
+        $resource = Write-Output $definition | ConvertFrom-Json -Depth 15                
+        $response = $null
+        # check if index exists -- if it exists we'll perform a PUT vs POST
+                
+        if (Assert-ResourceExists -Uri "$serviceUri/$($resource.name)?$apiVersionParam" -ServiceName $serviceName) {
+            Write-Host -ForegroundColor DarkYellow "Resource $($resource.name) already exists, proceeding with update!"
+            $response = Update-AzSearchResource -Uri "$($serviceUri)/$($resource.name)?$apiVersionParam" -Definition $definition
+        }
+        else {
+            Write-Host -ForegroundColor DarkYellow "Resource $($resource.name) does not exists, creating!"
+            $response = New-AzSearchResource -Uri "$($serviceUri)?$apiVersionParam" -Definition $definition
+        }
+
+        ConvertTo-Json -InputObject $response -Depth 5
     }
     else {
-        Write-Host -ForegroundColor DarkYellow "Resource $($resource.name) does not exists, creating!"
-        $response = New-AzSearchResource -Uri "$($serviceUri)?$apiVersionParam" -Definition $definition
+        Write-Host -ForegroundColor DarkYellow "Failed to fetch content from '$DefinitionFile'"
     }
+        
+
 }
-    
-ConvertTo-Json -InputObject $response -Depth 5
+finally {
+  Pop-Location
+}
