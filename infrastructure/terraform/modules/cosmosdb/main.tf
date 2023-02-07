@@ -6,7 +6,7 @@ resource "azurerm_cosmosdb_account" "cs" {
   kind                      = "GlobalDocumentDB"
   enable_automatic_failover = false
   geo_location {
-    location          = azurerm_resource_group.cog_search.location
+    location          = var.location
     failover_priority = 0
   }
   consistency_policy {
