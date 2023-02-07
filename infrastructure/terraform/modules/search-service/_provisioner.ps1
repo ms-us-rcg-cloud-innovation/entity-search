@@ -4,10 +4,9 @@ param(
     [Parameter(Mandatory = $true)]    
     [string] $DefinitionFile,
     [Parameter(Mandatory = $true)]    
-    [string] $APIVersion,
-    [Parameter(Mandatory = $true)]    
     [ValidateSet("Index", "DataSource", "Indexer")]
-    [string] $ResourceType
+    [string] $ResourceType,
+    [string] $APIVersion = "2020-06-30"
 )
 
 function TryGet-FileContent([string] $FilePath, [ref] $Content) {
@@ -100,8 +99,8 @@ try
     }
 
     $endpoint = $endpointMap[$ResourceType.ToLower()]
+    $apiVersionParam = "api-version=$APIVersion"
 
-    $apiVersionParam = "api-version=$APIVersion "#2020-06-30"
     $serviceUri = [string]::Format("https://{0}.search.windows.net/$($endpoint)", $ServiceName)
 
     $definition = $null
