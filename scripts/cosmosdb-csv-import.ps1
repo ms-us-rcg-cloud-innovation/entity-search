@@ -27,12 +27,6 @@ function Submit-PromptUntilYesOrNoInput($yes_or_no_prompt, $func) {
     }
 }
 
-$scriptPath = $MyInvocation.MyCommand.path
-$dir = Split-Path $scriptPath
-
-# move to script location
-Push-Location $dir
-
 try
 {
     Submit-PromptUntilYesOrNoInput "Prepare modules (y/n)?" {

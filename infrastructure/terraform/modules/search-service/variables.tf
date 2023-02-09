@@ -22,6 +22,10 @@ variable "indexer_definition_file" {
   type = string
 }
 
-variable "cosmosdb_connectionstring" {
+variable "cosmos_account_name" {
+  type = string
+}
+
+variable "cosmos_account_database" {
   type = string
 }

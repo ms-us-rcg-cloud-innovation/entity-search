@@ -49,7 +49,8 @@ module "search" {
   index_definition_file      = var.index_definition_file
   datasource_definition_file = var.datasource_definition_file
   indexer_definition_file    = var.indexer_definition_file
-  cosmosdb_connectionstring  = "${module.cosmosdb.db_connectionstring}Database=${var.database_name}"
+  cosmos_account_name        = local.cosmos_acccount_name
+  cosmos_account_database    = var.database_name
 
   depends_on = [
     module.cosmosdb

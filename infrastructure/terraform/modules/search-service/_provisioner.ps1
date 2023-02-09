@@ -36,19 +36,22 @@ function Get-DefaultAzRequestHeaders {
 function Assert-ResourceExists([string] $Uri, [string] $ServiceName) {
     $headers = Get-DefaultAzRequestHeaders        
     try {
-        Write-Host -ForegroundColor DarkYellow "GET $Uri"
+        Write-Host -ForegroundColor Green "GET $Uri"
         Invoke-RestMethod -uri $Uri -Method GET -Headers $headers  -ResponseHeadersVariable resHeaders -StatusCodeVariable status
-        Write-Host -ForegroundColor DarkYellow "Response: $status"
+        Write-Host -ForegroundColor Green "Response: $status"
         return $status -eq 200    
     }
     catch [Microsoft.PowerShell.Commands.HttpResponseException] {
         $status = $_.Exception.Response.StatusCode.value__
 
         if ($status -eq 404) {
-            Write-Host -ForegroundColor DarkRed "404 - Not Found"
+            Write-Host -ForegroundColor DarkYellow "404 - Resource Not Found"
             return $false
         }
         
+        $reason = $_.Exception.Response.ReasonPhrase
+
+        Write-Error "$status | $reason"
         Write-Error $_
         Exit 1
     }
@@ -56,14 +59,18 @@ function Assert-ResourceExists([string] $Uri, [string] $ServiceName) {
 
 function Update-AzSearchResource([string] $Uri, [string] $Definition, [string] $ServiceName) {
     try {   
-        Write-Host -ForegroundColor DarkYellow "PUT $Uri"
+        Write-Host -ForegroundColor Green "PUT $Uri"
         $headers = Get-DefaultAzRequestHeaders
         $headers.Add("Prefer", "return=representation")
         $response = Invoke-RestMethod -uri $Uri -Method PUT -Headers $headers -Body $Definition -ResponseHeadersVariable resHeaders -StatusCodeVariable status
-        Write-Host -ForegroundColor DarkYellow "Response: $status"
+        Write-Host -ForegroundColor Green "Response: $status"
         return $response
     }
     catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+        $status = $_.Exception.Response.StatusCode.value__
+        $reason = $_.Exception.Response.ReasonPhrase
+
+        Write-Error "$status | $reason"
         Write-Error $_
         Exit 1
     }        
@@ -71,13 +78,17 @@ function Update-AzSearchResource([string] $Uri, [string] $Definition, [string] $
 
 function New-AzSearchResource([string] $Uri, [string] $Definition) {
     try {
-        Write-Host -ForegroundColor DarkYellow "POST $Uri"
+        Write-Host -ForegroundColor Green "POST $Uri"
         $headers = Get-DefaultAzRequestHeaders
         $response = Invoke-RestMethod -uri $Uri -Method POST -Headers $headers -Body $Definition -ResponseHeadersVariable resHeaders -StatusCodeVariable status
-        Write-Host -ForegroundColor DarkYellow "Response: $status"
+        Write-Host -ForegroundColor Green "Response: $status"
         return $response
     }
     catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+        $status = $_.Exception.Response.StatusCode.value__
+        $reason = $_.Exception.Response.ReasonPhrase
+
+        Write-Error "$status | $reason"
         Write-Error $_
         Exit 1
     }  
@@ -90,7 +101,7 @@ Push-Location $dir
 
 try
 {
-    Write-Host -ForegroundColor Yellow "Pushed dir location $dir"
+    Write-Host -ForegroundColor Blue "Push-Location $dir"
 
     $endpointMap = @{
         "index" = "indexes"   
@@ -102,16 +113,16 @@ try
     $apiVersionParam = "api-version=$APIVersion"
 
     $serviceUri = [string]::Format("https://{0}.search.windows.net/$($endpoint)", $ServiceName)
-
+    
     $definition = $null
     
     #try to read content of given file
     if (TryGet-FileContent -FilePath $DefinitionFile -Content ([ref]$definition)) {
         if($ResourceType.ToLower() -eq "datasource") {
-            $definition = $definition.Replace('%COSMOS_DB%', $env:COSMOS_DB)
+            $definition = $definition.Replace('%COSMOS_DB_CONNECTIONSTRING%', $env:COSMOS_DB_CONNECTIONSTRING)
         }
-        
-        Write-Host -ForegroundColor blue $definition
+
+        Write-Host $definition
 
         $resource = Write-Output $definition | ConvertFrom-Json -Depth 15                
         $response = $null

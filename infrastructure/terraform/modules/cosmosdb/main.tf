@@ -5,6 +5,9 @@ resource "azurerm_cosmosdb_account" "cs" {
   offer_type                = "Standard"
   kind                      = "GlobalDocumentDB"
   enable_automatic_failover = false
+  identity {
+    type = "SystemAssigned"
+  }
   geo_location {
     location          = var.location
     failover_priority = 0

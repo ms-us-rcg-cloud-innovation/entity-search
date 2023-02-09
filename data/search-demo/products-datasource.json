@@ -1,11 +1,15 @@
-{   
-    "name" : "products-datasource",  
-    "description" : "Adventureworks CosmosDB data source",  
-    "type" : "cosmosdb",
-    "credentials" : { 
-        "connectionString" : "%COSMOS_DB%" 
-    },
-    "container": {
-        "name": "products"
-    }
-}  
+{
+  "name": "products-datasource",
+  "description": "Adventureworks CosmosDB data source",
+  "type": "cosmosdb",
+  "credentials": {
+    "connectionString": "%COSMOS_DB_CONNECTIONSTRING%"
+  },
+  "container": {
+    "name": "products"
+  },
+  "dataChangeDetectionPolicy": {
+    "@odata.type": "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+    "highWaterMarkColumnName": "_ts"
+  }
+}
