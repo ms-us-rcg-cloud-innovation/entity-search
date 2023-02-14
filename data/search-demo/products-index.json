@@ -5,7 +5,7 @@
       {
         "name": "id",
         "type": "Edm.String",
-        "searchable": false,
+        "searchable": true,
         "filterable": false,
         "retrievable": true,
         "sortable": false,
@@ -14,28 +14,12 @@
         "indexAnalyzer": null,
         "searchAnalyzer": null,
         "analyzer": null,
-
-        "synonymMaps": []
-      },
-      {
-        "name": "NewProductNumber",
-        "type": "Edm.String",
-        "searchable": false,
-        "filterable": true,
-        "retrievable": false,
-        "sortable": false,
-        "facetable": false,
-        "key": false,
-        "indexAnalyzer": null,
-        "searchAnalyzer": null,
-        "analyzer": null,
-
         "synonymMaps": []
       },
       {
         "name": "ProductNumber",
         "type": "Edm.String",
-        "searchable": false,
+        "searchable": true,
         "filterable": true,
         "retrievable": false,
         "sortable": false,
@@ -80,7 +64,7 @@
       {
         "name": "MakeFlag",
         "type": "Edm.String",
-        "searchable": false,
+        "searchable": true,
         "filterable": true,
         "retrievable": false,
         "sortable": false,

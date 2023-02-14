@@ -4,19 +4,20 @@ data "azurerm_cosmosdb_account" "db" {
 }
 
 resource "azurerm_search_service" "search" {
-  name                = var.name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  sku                 = "standard"
+  name                          = var.name
+  resource_group_name           = var.resource_group_name
+  location                      = var.location
+  sku                           = "standard"
+  public_network_access_enabled = true
   identity {
     type = "SystemAssigned"
   }
 }
 
 resource "azurerm_role_assignment" "cosmos_reader" {
-  scope = data.azurerm_cosmosdb_account.db.id
+  scope                = data.azurerm_cosmosdb_account.db.id
   role_definition_name = "Cosmos DB Account Reader Role"
-  principal_id = azurerm_search_service.search.identity[0].principal_id
+  principal_id         = azurerm_search_service.search.identity[0].principal_id
 }
 
 resource "null_resource" "configure_search_resources" {
@@ -59,4 +60,6 @@ resource "null_resource" "configure_search_resources" {
     azurerm_search_service.search,
     azurerm_role_assignment.cosmos_reader
   ]
+
+
 }

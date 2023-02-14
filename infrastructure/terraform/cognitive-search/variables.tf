@@ -45,7 +45,7 @@ variable "index_definition_file" {
 
 variable "datasource_definition_file" {
   type = string
-  description = "Data Source for your data. This includes connection and container details"
+  description = "Data source definition file to be used by Search service. This includes connection and container details"
 }
 
 variable "indexer_definition_file" {
