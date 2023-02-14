@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 namespace SearchFunction.Models
 {
     internal class QueryRequest
-    {
-        [Required]
-        [MinLength(1)]
+    {       
         public string SearchParameter { get; set; }
 
         public string FilterOptions { get; set; }

@@ -38,21 +38,28 @@ namespace SearchFunction.Functions
                 return response;
             }
 
-            var results = await SearchProductsAsync(queryRequest);
-            var docs = new Collection<SearchResult<Product>>();
-            await foreach(var r in results.GetResultsAsync())
+            var metaResults = new
             {
-                docs.Add(r);
-            }    
+                Details = await SearchProductsAsync(queryRequest),
+                Docs = new Collection<SearchResult<Product>>()
+            };
+            await foreach(var r in metaResults.Details.GetResultsAsync())
+            {
+                metaResults.Docs.Add(r);
+            }
 
-            await response.WriteAsJsonAsync(docs);
+
+            await response.WriteAsJsonAsync(metaResults);
 
             return response;
         }
 
         private async Task<SearchResults<Product>> SearchProductsAsync(QueryRequest query)
         {
-            SearchOptions searchOptions = new();
+            SearchOptions searchOptions = new()
+            {
+                SearchMode = SearchMode.All
+            };
 
             if (!string.IsNullOrEmpty(query.FilterOptions?.Trim()))
             {
@@ -61,7 +68,7 @@ namespace SearchFunction.Functions
 
             searchOptions.IncludeTotalCount = true;
             
-            searchOptions.QueryType = SearchQueryType.Simple;
+            searchOptions.QueryType = SearchQueryType.Full;
             var results = await _searchClient.SearchAsync<Product>(query.SearchParameter, searchOptions);
 
             return results;
