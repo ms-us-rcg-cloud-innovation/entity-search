@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SearchFunction.Models
 {
-    internal class QueryRequest
+    public class QueryRequest
     {       
         public string SearchParameter { get; set; }
 
