@@ -3,6 +3,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SearchFunction.Clients;
 using SearchFunction.Models;
 using SearchFunction.Services;
 using System.Text.Json;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SearchFunction.Services
+namespace SearchFunction.Clients
 {
     public class CosmosServiceClient
     {

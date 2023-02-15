@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using SearchFunction.Clients;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
