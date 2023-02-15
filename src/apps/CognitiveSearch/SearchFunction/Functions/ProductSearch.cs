@@ -23,7 +23,7 @@ namespace SearchFunction.Functions
             _logger = loggerFactory.CreateLogger<ProductSearch>();
         }
 
-        [Function("SimpleSearch")]
+        [Function(nameof(ProductSearch))]
         public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Function
                 , "post"
