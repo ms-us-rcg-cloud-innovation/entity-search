@@ -39,7 +39,7 @@ namespace SearchFunction.Services
 
             var queryResults = new QueryResult<T>(results);
 
-            // block until content is ready for returning
+            // await until content is ready for returning
             await queryResults.CompleteAsync();
 
             return queryResults;
