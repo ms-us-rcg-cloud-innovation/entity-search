@@ -5,7 +5,7 @@
     "targetIndexName" : "products-index",  
     "disabled" : false,
     "schedule" : {
-        "interval": "P1D",
+        "interval": "PT24H",
         "startTime": "2023-01-01T00:00:00Z"
     }
 } 

@@ -1,18 +1,13 @@
 ﻿using Azure.Search.Documents.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SearchFunction.Models
 {
     public class QueryResult<T>
-    {       
+    {
         private readonly Task _ready;
 
-        public QueryResult(SearchResults<T> searchResults) 
+        public QueryResult(SearchResults<T> searchResults)
         {
             _ready = ProcessResultsAsync(searchResults);
         }
@@ -26,7 +21,7 @@ namespace SearchFunction.Models
         private async Task ProcessResultsAsync(SearchResults<T> searchResults)
         {
             Collection<T> collection = new();
-            await foreach(var document in searchResults.GetResultsAsync())
+            await foreach (var document in searchResults.GetResultsAsync())
             {
                 collection.Add(document.Document);
             }

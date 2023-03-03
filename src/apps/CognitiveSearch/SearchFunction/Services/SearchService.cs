@@ -1,12 +1,6 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using SearchFunction.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SearchFunction.Services
 {
@@ -14,28 +8,23 @@ namespace SearchFunction.Services
         where T : class
     {
         private readonly SearchClient _searchClient;
+        private readonly SearchOptions _searchOptions;
 
-        public SearchService(SearchClient searchClient) 
+        public SearchService(SearchClient searchClient, SearchOptions searchOptions)
         {
             _searchClient = searchClient;
+            _searchOptions = searchOptions;            
         }
 
         public async Task<QueryResult<T>> SearchAsync(QueryRequest query)
         {
-            SearchOptions searchOptions = new()
-            {
-                SearchMode = SearchMode.Any
-            };
-
             if (!string.IsNullOrEmpty(query.FilterOptions?.Trim()))
             {
-                searchOptions.Filter = query.FilterOptions;
+                _searchOptions.Filter = query.FilterOptions;
             }
 
-            searchOptions.IncludeTotalCount = true;
 
-            searchOptions.QueryType = SearchQueryType.Full;
-            SearchResults<T> results = await _searchClient.SearchAsync<T>(query.SearchParameter, searchOptions);
+            SearchResults<T> results = await _searchClient.SearchAsync<T>(query.SearchParameter, _searchOptions);
 
             var queryResults = new QueryResult<T>(results);
 
