@@ -29,7 +29,9 @@ namespace ChangeFeedIndexerFunction.Functions
         {
             if (products?.Any() == true)
             {
-                var results = _indexService.IndexDocumentsAsync(products);
+                var results = await _indexService.IndexDocumentsAsync(products);
+
+                _logger.LogInformation("Indexed documents | {results}", results);
             }
         }
     }
