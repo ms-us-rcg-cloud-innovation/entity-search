@@ -1,11 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using SearchFunction.Clients;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SearchFunction.Services
 {
@@ -22,13 +17,13 @@ namespace SearchFunction.Services
         public async Task<IEnumerable<T>> GetDocumentsByPointReadAsync(IEnumerable<string> ids)
         {
             Collection<Task<ItemResponse<T>>> queries = new();
-            foreach(var id in ids)
+            foreach (var id in ids)
             {
                 queries.Add(_serviceClient.Container.ReadItemAsync<T>(id, new PartitionKey(id.ToString())));
             }
 
             var response = await Task.WhenAll(queries);
-                                    
+
             return response.Select(x => x.Resource).ToList(); ;
         }
 

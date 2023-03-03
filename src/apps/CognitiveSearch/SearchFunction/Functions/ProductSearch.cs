@@ -1,12 +1,9 @@
-using System.Collections.ObjectModel;
-using System.Net;
-using Azure.Search.Documents;
-using Azure.Search.Documents.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using SearchFunction.Models;
 using SearchFunction.Services;
+using System.Net;
 
 namespace SearchFunction.Functions
 {
