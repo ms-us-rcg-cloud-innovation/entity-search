@@ -1,4 +1,5 @@
-using ChangeFeedIndexerFunction.Services;
+using Azure.Search.Documents;
+using Azure.Search.Documents.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using SearchFunction.Models;
@@ -8,12 +9,12 @@ namespace ChangeFeedIndexerFunction.Functions
     public class ChangeFeedIndexer
     {
         private readonly ILogger _logger;
-        private readonly IndexService _indexService;
+        private readonly SearchClient _searchClient;
 
-        public ChangeFeedIndexer(ILoggerFactory loggerFactory, IndexService indexService)
+        public ChangeFeedIndexer(ILoggerFactory loggerFactory, SearchClient searchClient)
         {
             _logger = loggerFactory.CreateLogger<ChangeFeedIndexer>();
-            _indexService = indexService;
+            _searchClient = searchClient;
         }
 
         [Function(nameof(ChangeFeedIndexer))]
@@ -29,9 +30,14 @@ namespace ChangeFeedIndexerFunction.Functions
         {
             if (products?.Any() == true)
             {
-                var results = await _indexService.IndexDocumentsAsync(products);
+                IndexDocumentsBatch<Product> batch = new();
+                foreach (var doc in products)
+                {
+                    batch.Actions.Add(new IndexDocumentsAction<Product>(IndexActionType.MergeOrUpload, doc));
+                }
 
-                _logger.LogInformation("Indexed documents | {results}", results);
+                var indexResult = await _searchClient.IndexDocumentsAsync(batch);
+
             }
         }
     }
