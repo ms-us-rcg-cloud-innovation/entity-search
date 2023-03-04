@@ -28,7 +28,7 @@ namespace ChangeFeedIndexerFunction.Functions
             )] IReadOnlyList<Product> products,
             FunctionContext functionContext)
         {
-            if (products?.Any() == true)
+            if (products?.Count > 0)
             {
                 IndexDocumentsBatch<Product> batch = new();
                 foreach (var doc in products)
