@@ -33,11 +33,11 @@ namespace ChangeFeedIndexerFunction.Functions
                 IndexDocumentsBatch<Product> batch = new();
                 foreach (var doc in products)
                 {
-                    batch.Actions.Add(new IndexDocumentsAction<Product>(IndexActionType.MergeOrUpload, doc));
+                    var indexDocAction = new IndexDocumentsAction<Product>(IndexActionType.MergeOrUpload, doc);
+                    batch.Actions.Add(indexDocAction);
                 }
 
                 var indexResult = await _searchClient.IndexDocumentsAsync(batch);
-
             }
         }
     }
