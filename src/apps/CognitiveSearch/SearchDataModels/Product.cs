@@ -5,6 +5,7 @@ namespace SearchFunction.Models
     public class Product
     {
         [JsonPropertyName("id")]
+
         public string Id { get; set; }
 
         public string ProductNumber { get; set; }

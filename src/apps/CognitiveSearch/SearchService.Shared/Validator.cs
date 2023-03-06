@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SearchFunction
+namespace SearchService.Shared
 {
-    internal static class Validator
+    public static class Validator
     {
         public static bool IsValid<T>(this T value, out IEnumerable<string> validationErrors, bool validateAllProperties = false)
             where T : class

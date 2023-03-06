@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using SearchFunction.Models;
 using SearchFunction.Services;
 using System.Net;
+using SearchService.Shared;
+
 
 namespace SearchFunction.Functions
 {
@@ -19,6 +21,9 @@ namespace SearchFunction.Functions
             _cosmosService = cosmosService;
             _logger = loggerFactory.CreateLogger<ProductSearch>();
         }
+
+        public record DatabaseResponse(int Count, IEnumerable<Product> Docs);
+        public record QueryResponse(QueryResult<ProductIndex> SearchResults, DatabaseResponse DbResults);
 
         [Function(nameof(ProductSearch))]
         public async Task<HttpResponseData> RunAsync(
@@ -38,9 +43,20 @@ namespace SearchFunction.Functions
                 return response;
             }
 
-            var queryResults = await _searchService.SearchAsync(queryRequest);
+            if(string.IsNullOrEmpty(queryRequest.SearchParameter) && string.IsNullOrEmpty(queryRequest.FilterOptions))
+            {
+                response.StatusCode = HttpStatusCode.BadRequest;
+                await response.WriteAsJsonAsync(new
+                {
+                    Error = "`SearchParameter` or `FilterOptions` must be specified in request"
+                });
 
-            var docs = await _cosmosService.GetDocumentsByPointReadAsync(queryResults.Documents.Select(x => x.Id).ToList());
+                return response; ;
+            }
+
+            QueryResult<ProductIndex> queryResults = await _searchService.SearchAsync(queryRequest);
+
+            IEnumerable<Product> docs = await _cosmosService.GetDocumentsByPointReadAsync(queryResults.Documents.Select(x => x.Id).ToList());
 
             await response.WriteAsJsonAsync(new
             {

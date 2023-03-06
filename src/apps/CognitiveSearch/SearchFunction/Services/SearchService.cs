@@ -34,7 +34,7 @@ namespace SearchFunction.Services
             }
 
             SearchResults<T> results = await _searchClient.SearchAsync<T>(query.SearchParameter, _searchOptions);
-
+            
             var queryResults = new QueryResult<T>(results);
 
             // await until content is ready for returning

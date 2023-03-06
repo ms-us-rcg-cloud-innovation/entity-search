@@ -1,3 +1,4 @@
+using ChangeFeedIndexerFunction;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -6,6 +7,8 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices((context, services) =>
     {
+        services.AddOptions();
+        services.AddSingleton(sp => new FeedIndexerOptions { BatchSize = double.Parse(context.Configuration["FEEDINDEXER_BATCH_SIZE"]) });
         services.AddAzureClients(builder =>
         {
             var endpoint = new Uri(context.Configuration["SEARCH_ENDPOINT"]);
