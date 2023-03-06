@@ -1,4 +1,5 @@
-﻿using Azure.Search.Documents.Models;
+﻿using Azure;
+using Azure.Search.Documents.Models;
 using System.Collections.ObjectModel;
 
 namespace SearchFunction.Models
@@ -20,6 +21,7 @@ namespace SearchFunction.Models
 
         private async Task ProcessResultsAsync(SearchResults<T> searchResults)
         {
+            // retrive documents matching query request
             Collection<T> collection = new();
             await foreach (var document in searchResults.GetResultsAsync())
             {

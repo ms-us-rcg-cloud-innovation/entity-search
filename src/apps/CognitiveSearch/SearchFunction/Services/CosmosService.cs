@@ -7,11 +7,11 @@ namespace SearchFunction.Services
     public class CosmosService<T>
         where T : class
     {
-        private readonly CosmosServiceClient _serviceClient;
+        private readonly CosmosServiceClient _client;
 
         public CosmosService(CosmosServiceClient serviceClient)
         {
-            _serviceClient = serviceClient;
+            _client = serviceClient;
         }
 
         public async Task<IEnumerable<T>> GetDocumentsByPointReadAsync(IEnumerable<string> ids)
@@ -19,7 +19,7 @@ namespace SearchFunction.Services
             Collection<Task<ItemResponse<T>>> queries = new();
             foreach (var id in ids)
             {
-                queries.Add(_serviceClient.Container.ReadItemAsync<T>(id, new PartitionKey(id.ToString())));
+                queries.Add(_client.Container.ReadItemAsync<T>(id, new PartitionKey(id.ToString())));
             }
 
             var response = await Task.WhenAll(queries);
@@ -29,11 +29,11 @@ namespace SearchFunction.Services
 
         public async Task<IEnumerable<T>> GetDocumentsByQueryAsync(IEnumerable<string> ids)
         {
-            var query = new QueryDefinition($"SELECT * FROM {_serviceClient.Container.Id} c WHERE ARRAY_CONTAINS(@ids, c.id)")
+            var query = new QueryDefinition($"SELECT * FROM {_client.Container.Id} c WHERE ARRAY_CONTAINS(@ids, c.id)")
                                 .WithParameter("@ids", ids);
 
             List<T> dbResponse = new();
-            var feedIterator = _serviceClient.Container.GetItemQueryIterator<T>(query);
+            var feedIterator = _client.Container.GetItemQueryIterator<T>(query);
 
             while (feedIterator.HasMoreResults)
             {
