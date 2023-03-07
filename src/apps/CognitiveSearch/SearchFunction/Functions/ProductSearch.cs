@@ -22,9 +22,6 @@ namespace SearchFunction.Functions
             _logger = loggerFactory.CreateLogger<ProductSearch>();
         }
 
-        public record DatabaseResponse(int Count, IEnumerable<Product> Docs);
-        public record QueryResponse(QueryResult<ProductIndex> SearchResults, DatabaseResponse DbResults);
-
         [Function(nameof(ProductSearch))]
         public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Function
@@ -51,7 +48,7 @@ namespace SearchFunction.Functions
                     Error = "`SearchParameter` or `FilterOptions` must be specified in request"
                 });
 
-                return response; ;
+                return response; 
             }
 
             QueryResult<ProductIndex> queryResults = await _searchService.SearchAsync(queryRequest);
