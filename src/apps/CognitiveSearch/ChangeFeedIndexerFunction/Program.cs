@@ -1,14 +1,16 @@
+using Azure.Search.Documents;
 using ChangeFeedIndexerFunction;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SearchFunction.Models;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices((context, services) =>
     {
         services.AddOptions();
-        services.AddSingleton(sp => new FeedIndexerOptions { BatchSize = double.Parse(context.Configuration["FEEDINDEXER_BATCH_SIZE"]) });
+        services.Configure<SearchIndexingBufferedSenderOptions<Product>>(context.Configuration.GetSection("SearchIndexerOptions"));   
         services.AddAzureClients(builder =>
         {
             var endpoint = new Uri(context.Configuration["SEARCH_ENDPOINT"]);

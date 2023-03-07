@@ -3,6 +3,7 @@ using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SearchFunction.Models;
 using System;
 using System.Collections.Concurrent;
@@ -16,13 +17,13 @@ namespace ChangeFeedIndexerFunction.Functions
     {
         private readonly ILogger _logger;
         private readonly SearchClient _searchClient;
-        private readonly FeedIndexerOptions _options;
+        private readonly SearchIndexingBufferedSenderOptions<Product> _bufferedSenderOptions;
 
-        public ChangeFeedIndexer(ILoggerFactory loggerFactory, SearchClient searchClient, FeedIndexerOptions options)
+        public ChangeFeedIndexer(ILoggerFactory loggerFactory, SearchClient searchClient, IOptions<SearchIndexingBufferedSenderOptions<Product>> bufferedSenderOptions)
         {
             _logger = loggerFactory.CreateLogger<ChangeFeedIndexer>();
             _searchClient = searchClient;
-            _options = options; //arbitrary batch size
+            _bufferedSenderOptions = bufferedSenderOptions.Value;
         }
 
         // This function is triggered when a change is published to the
@@ -42,7 +43,8 @@ namespace ChangeFeedIndexerFunction.Functions
                 Connection = "COSMOSDB_CONNECTION_STRING",
                 LeaseContainerName = "%COSMOSDB_LEASE_CONTAINER_NAME%",
                 CreateLeaseContainerIfNotExists = true // lease container for chaged feed
-            )] IReadOnlyList<Product> products)
+            )] IReadOnlyList<Product> products,
+            CancellationToken cancellationToken)
         {
             if (products.Count() == 0)
             {
@@ -50,61 +52,14 @@ namespace ChangeFeedIndexerFunction.Functions
                 return;
             }
 
-            var productsArray = products.ToArray();
-            // Batch input if it exceeds the configured size limit
-            if (products.Count() > _options.BatchSize)
-            { // batch process the input
-
-                await IndexDocumentsInBatchesAsync(productsArray);
-            }
-            else
-            {
-                await IndexDocumentsAsync(productsArray);
-            }
-        }
-
-        private async Task<Azure.Response<IndexDocumentsResult>[]> IndexDocumentsInBatchesAsync(ReadOnlyMemory<Product> products)
-        {
-            var batchCount = (int)Math.Ceiling(products.Length / _options.BatchSize);
-            var indexJobs = new List<Task<Azure.Response<IndexDocumentsResult>>>();
-            int batchLength = (int)_options.BatchSize - 1;
-
-            for (int n = 0; n < batchCount; n++)
-            {
-                int start = n * (int)_options.BatchSize;
-                ReadOnlyMemory<Product> docBatch;
-
-                if (start + batchLength < products.Length)
-                {// if slice is withint range of array length
-                    docBatch = products.Slice(start, batchLength);
-                }
-                else
-                {// if batch size pushes slice out of bounds
-                    docBatch = products.Slice(start); // capture remainder
-                   
-                }
-
-                indexJobs.Add(IndexDocumentsAsync(docBatch));
-            }
-
-            return await Task.WhenAll(indexJobs);
-        } 
-
-        private async Task<Azure.Response<IndexDocumentsResult>> IndexDocumentsAsync(ReadOnlyMemory<Product> products)
-        {
-            IndexDocumentsBatch<Product> batch = new();
-            for(int n = 0; n < products.Length; n++)
-            {
-                Product doc = products.Span[n];
-
-                // Add each document to the indexing action collection with 
-                // Merge or Upload setting. This guarantees if a document with
-                // the defined index ID exists it's udpated, otherwise it's a 
-                // new document index is inserted.
-                var indexDocAction = new IndexDocumentsAction<Product>(IndexActionType.MergeOrUpload, doc);
-                batch.Actions.Add(indexDocAction);
-            }
-            return await _searchClient.IndexDocumentsAsync(batch);
+            // create a new buffered sender for batch sending
+            var batchSender = new SearchIndexingBufferedSender<Product>(_searchClient, _bufferedSenderOptions);
+                        
+            // prep documents batch for upload
+            await batchSender.MergeOrUploadDocumentsAsync(products, cancellationToken);
+            
+            // flush buffer -- attempt index uploads
+            await batchSender.FlushAsync(cancellationToken);
         }
     }
 }
