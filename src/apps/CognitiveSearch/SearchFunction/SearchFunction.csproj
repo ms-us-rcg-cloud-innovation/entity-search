@@ -17,7 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SearchDataModels\SearchDataModels.csproj" />
-    <ProjectReference Include="..\SearchService.Shared\SearchService.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

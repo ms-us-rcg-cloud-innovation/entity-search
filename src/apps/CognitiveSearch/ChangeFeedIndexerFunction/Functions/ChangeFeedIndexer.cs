@@ -46,6 +46,7 @@ namespace ChangeFeedIndexerFunction.Functions
             )] IReadOnlyList<Product> products,
             CancellationToken cancellationToken)
         {
+            // check if there are any documents to index
             if (products.Count() == 0)
             {
                 _logger.LogInformation("No documents to index");

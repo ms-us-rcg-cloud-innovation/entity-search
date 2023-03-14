@@ -14,6 +14,8 @@ namespace SearchFunction.Services
             _client = serviceClient;
         }
 
+        // this method is used to get documents by point read from Cosmos DB
+        // because point reads are faster and cost fewer RUs
         public async Task<IEnumerable<T>> GetDocumentsByPointReadAsync(IEnumerable<string> ids)
         {
             Collection<Task<ItemResponse<T>>> queries = new();

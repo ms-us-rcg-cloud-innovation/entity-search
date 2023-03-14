@@ -4,8 +4,7 @@ using Microsoft.Extensions.Logging;
 using SearchFunction.Models;
 using SearchFunction.Services;
 using System.Net;
-using SearchService.Shared;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace SearchFunction.Functions
 {
@@ -13,59 +12,45 @@ namespace SearchFunction.Functions
     {
         private readonly SearchService<ProductIndex> _searchService;
         private readonly CosmosService<Product> _cosmosService;
+        private readonly QueryRequestValidationService _queryRequestValidationService;
         private readonly ILogger _logger;
 
-        public ProductSearch(ILoggerFactory loggerFactory, SearchService<ProductIndex> searchService, CosmosService<Product> cosmosService)
+        public ProductSearch(ILoggerFactory loggerFactory
+                           , SearchService<ProductIndex> searchService
+                           , CosmosService<Product> cosmosService
+                           , QueryRequestValidationService queryRequestValidationService)
         {
             _searchService = searchService;
             _cosmosService = cosmosService;
+            _queryRequestValidationService = queryRequestValidationService;
             _logger = loggerFactory.CreateLogger<ProductSearch>();
         }
 
+        // Azure function that is triggered when an HTTP request is received
+        // the request is deserialized into a QueryRequest object and validated 
+        // using the QueryRequestValidationService
         [Function(nameof(ProductSearch))]
         public async Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function
-                , "post"
-                , Route = "product-search")] HttpRequestData req)
+                       [HttpTrigger(AuthorizationLevel.Function
+                           , "post"
+                           , Route = "product-search")] HttpRequestData req)
         {
             var response = req.CreateResponse();
-
             var queryRequest = await req.ReadFromJsonAsync<QueryRequest>();
 
-            if (!queryRequest.IsValid(out var validationErrors, validateAllProperties: true))
+            if (_queryRequestValidationService.Validate(queryRequest, out IList<ValidationResult> validationResults, true))
             {
                 response.StatusCode = HttpStatusCode.BadRequest;
-                await response.WriteAsJsonAsync(validationErrors);
-
+                await response.WriteAsJsonAsync(validationResults);
                 return response;
             }
 
-            if(string.IsNullOrEmpty(queryRequest.SearchParameter) && string.IsNullOrEmpty(queryRequest.FilterOptions))
-            {
-                response.StatusCode = HttpStatusCode.BadRequest;
-                await response.WriteAsJsonAsync(new
-                {
-                    Error = "`SearchParameter` or `FilterOptions` must be specified in request"
-                });
-
-                return response; 
-            }
-
-            QueryResult<ProductIndex> queryResults = await _searchService.SearchAsync(queryRequest);
-
-            IEnumerable<Product> docs = await _cosmosService.GetDocumentsByPointReadAsync(queryResults.Documents.Select(x => x.Id).ToList());
-
-            await response.WriteAsJsonAsync(new
-            {
-                SearchResults = queryResults,
-                DbResults = new
-                {
-                    Count = docs.Count(),
-                    docs
-                }
-            });
-
+            QueryResult<ProductIndex> queryResults = await _searchService.SearchAsync(queryRequest);            
+            IEnumerable<Product> docs = await _cosmosService.GetDocumentsByPointReadAsync(queryResults.Documents.Select(x => x.Id).ToList());            
+            await response.WriteAsJsonAsync(docs);
+            
             return response;
         }
+
     }
 }

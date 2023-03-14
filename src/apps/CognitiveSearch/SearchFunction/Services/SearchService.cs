@@ -32,7 +32,7 @@ namespace SearchFunction.Services
             {
                 _searchOptions.Filter = query.FilterOptions;
             }
-
+            
             SearchResults<T> results = await _searchClient.SearchAsync<T>(query.SearchParameter, _searchOptions);
             
             var queryResults = new QueryResult<T>(results);

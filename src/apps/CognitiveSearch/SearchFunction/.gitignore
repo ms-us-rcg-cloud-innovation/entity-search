@@ -3,7 +3,6 @@
 
 # IDE
 .vs/
-.vscode/
 
 # Azure Functions localsettings file
 local.settings.json

@@ -20,7 +20,8 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.AddScoped<SearchService<ProductIndex>>();
-        services.AddScoped<CosmosService<Product>>();        
+        services.AddScoped<CosmosService<Product>>();
+        services.AddSingleton<QueryRequestValidationService>();
         services.AddSingleton<CosmosServiceClient>(options =>
         {
             // Configure CosmosClient for query results document retrieval
@@ -43,6 +44,7 @@ var host = new HostBuilder()
 
             builder.AddSearchClient(endpoint, indexName, key);
         });
+
         // Configured the Search Client options to be passed to the 
         // SearchService. This is where you define query type and search mode.
         // SDK v11: https://learn.microsoft.com/en-us/azure/search/search-howto-dotnet-sdk
@@ -50,7 +52,8 @@ var host = new HostBuilder()
         //   simple: https://learn.microsoft.com/en-us/azure/search/search-query-simple-examples
         //   full:   https://learn.microsoft.com/en-us/azure/search/search-query-lucene-examples
         //   semantic (not tested): https://learn.microsoft.com/en-us/azure/search/semantic-search-overview
-        // SearchMode: 
+        // SearchMode:
+        //   referece: https://learn.microsoft.com/en-us/azure/search/search-query-simple-examples#example-1-full-text-search
         //   all: find matches based on all criteria - favors precision
         //   any: find matches based on any criteria - favors recall
         services.AddScoped(sp =>
@@ -59,7 +62,8 @@ var host = new HostBuilder()
             options.IncludeTotalCount = true;
             options.QueryType = SearchQueryType.Full;
             options.SearchMode = SearchMode.Any;
-
+            options.Size = 2;
+            
             return options;
         });
 
