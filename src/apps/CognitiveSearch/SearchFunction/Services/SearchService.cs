@@ -32,14 +32,15 @@ namespace SearchFunction.Services
             {
                 _searchOptions.Filter = query.FilterOptions;
             }
-            
+
+            _searchOptions.Size = query.ResultsPerPage;
+            _searchOptions.Skip = (query.PageIndex - 1) * query.ResultsPerPage;
+
             SearchResults<T> results = await _searchClient.SearchAsync<T>(query.SearchParameter, _searchOptions);
             
-            var queryResults = new QueryResult<T>(results);
-
-            // await until content is ready for returning
-            await queryResults.CompleteAsync();
-
+            var queryResults = new QueryResult<T>(query.ResultsPerPage, query.ContinuationToken);
+            await queryResults.ProcessResultsAsync(results);
+            
             return queryResults;
         }
     }

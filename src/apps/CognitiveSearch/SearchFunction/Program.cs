@@ -62,7 +62,6 @@ var host = new HostBuilder()
             options.IncludeTotalCount = true;
             options.QueryType = SearchQueryType.Full;
             options.SearchMode = SearchMode.Any;
-            options.Size = 2;
             
             return options;
         });

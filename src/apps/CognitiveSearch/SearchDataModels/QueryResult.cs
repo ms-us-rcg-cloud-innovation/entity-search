@@ -8,27 +8,26 @@ namespace SearchFunction.Models
     {
         private readonly Task _ready;
 
-        public QueryResult(SearchResults<T> searchResults)
+        public int PageSize { get; }
+
+        public QueryResult(int pageSize, string continuationToken)
         {
-            _ready = ProcessResultsAsync(searchResults);
+            PageSize = pageSize;
+            ContinuationToken = continuationToken;          
         }
+    
+        public int Count => Documents?.Count ?? 0;
 
-        public async Task CompleteAsync() => await _ready;
+        public string ContinuationToken { get; set; }
 
-        public int Count => Documents?.Count() ?? 0;
+        public List<T> Documents { get; } = new();
 
-        public IEnumerable<T> Documents { get; set; }
-
-        private async Task ProcessResultsAsync(SearchResults<T> searchResults)
+        public async Task ProcessResultsAsync(SearchResults<T> searchResults)
         {
-            // retrive documents matching query request
-            Collection<T> collection = new();
-            await foreach (var document in searchResults.GetResultsAsync())
+            await foreach(var doc in searchResults.GetResultsAsync())
             {
-                collection.Add(document.Document);
+                Documents.Add(doc.Document);
             }
-
-            Documents = collection;
         }
     }
 }

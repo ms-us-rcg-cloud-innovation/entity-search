@@ -12,5 +12,15 @@ namespace SearchFunction.Models
         [MinLength(0)]
         [MaxLength(512)]
         public string FilterOptions { get; set; }
+
+        [Required]
+        [Range(1, short.MaxValue)]
+        public short PageIndex { get; set; }
+
+        [Required]
+        [Range(1, 50)]
+        public short PageSize { get; set; }
+
+        public string ContinuationToken { get; set; }
     }
 }
