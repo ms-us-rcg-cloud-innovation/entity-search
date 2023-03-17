@@ -14,12 +14,12 @@ namespace SearchFunction.Models
         public string FilterOptions { get; set; }
 
         [Required]
-        [Range(1, short.MaxValue)]
-        public short PageIndex { get; set; }
+        [Range(1, int.MaxValue)]
+        public int PageIndex { get; set; }
 
         [Required]
-        [Range(1, 50)]
-        public short PageSize { get; set; }
+        [Range(1, 100)]
+        public int PageSize { get; set; }
 
         public string ContinuationToken { get; set; }
     }
