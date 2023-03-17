@@ -46,8 +46,15 @@ namespace SearchFunction.Functions
             }
 
             QueryResult<ProductIndex> queryResults = await _searchService.SearchAsync(queryRequest);            
-            IEnumerable<Product> docs = await _cosmosService.GetDocumentsByPointReadAsync(queryResults.Documents.Select(x => x.Id).ToList());            
-            await response.WriteAsJsonAsync(docs);
+            IEnumerable<Product> docs = await _cosmosService.GetDocumentsByPointReadAsync(queryResults.Documents.Select(x => x.Id).ToList());  
+            
+            var results = new
+            {
+                SearchResults = queryResults,
+                DatabaseResults = docs
+            };
+
+            await response.WriteAsJsonAsync(results);
             
             return response;
         }

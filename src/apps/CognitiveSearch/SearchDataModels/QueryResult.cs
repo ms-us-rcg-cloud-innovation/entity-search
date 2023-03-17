@@ -1,34 +1,27 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
 using System.Collections.ObjectModel;
+using System.Data.Common;
+using System.Text.Json.Serialization;
 
 namespace SearchFunction.Models
 {
-    public class QueryResult<T>
+    public record class QueryResult<T>(SearchResults<T> SearchResults, int PageIndex, int MaxPageSize, int TotalAvailablePages, int RemainingPages, long? Skip)
+        where T : class
     {
-        private readonly Task _ready;
+        public int PageSize => Documents.Count;
 
-        public QueryResult(SearchResults<T> searchResults)
-        {
-            _ready = ProcessResultsAsync(searchResults);
-        }
+        private readonly List<T> _documents = new();
+        [JsonIgnore]
+        public IReadOnlyList<T> Documents => _documents;
 
-        public async Task CompleteAsync() => await _ready;
-
-        public int Count => Documents?.Count() ?? 0;
-
-        public IEnumerable<T> Documents { get; set; }
-
-        private async Task ProcessResultsAsync(SearchResults<T> searchResults)
-        {
-            // retrive documents matching query request
-            Collection<T> collection = new();
-            await foreach (var document in searchResults.GetResultsAsync())
+        public async Task ProcessResultsAsync()
+        {            
+            var results = SearchResults.GetResultsAsync();
+            await foreach (var doc in results)
             {
-                collection.Add(document.Document);
+                _documents.Add(doc.Document);
             }
-
-            Documents = collection;
         }
     }
 }

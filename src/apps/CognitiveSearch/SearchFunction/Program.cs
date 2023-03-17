@@ -48,6 +48,10 @@ var host = new HostBuilder()
         // Configured the Search Client options to be passed to the 
         // SearchService. This is where you define query type and search mode.
         // SDK v11: https://learn.microsoft.com/en-us/azure/search/search-howto-dotnet-sdk
+        // To understand the expected results and behavior Azure Search will potentially exhibit
+        // read careuflly through the Paging results section of the
+        // docs here: https://learn.microsoft.com/en-us/azure/search/search-pagination-page-layout#paging-results
+        // OData reference: https://learn.microsoft.com/en-us/azure/search/query-odata-filter-orderby-syntax
         // Query Types: 
         //   simple: https://learn.microsoft.com/en-us/azure/search/search-query-simple-examples
         //   full:   https://learn.microsoft.com/en-us/azure/search/search-query-lucene-examples
@@ -56,14 +60,15 @@ var host = new HostBuilder()
         //   referece: https://learn.microsoft.com/en-us/azure/search/search-query-simple-examples#example-1-full-text-search
         //   all: find matches based on all criteria - favors precision
         //   any: find matches based on any criteria - favors recall
+        // OrderyBy:
+        //  reference: https://learn.microsoft.com/en-us/azure/search/search-query-odata-orderby        
         services.AddScoped(sp =>
         {
             var options = new SearchOptions();
             options.IncludeTotalCount = true;
             options.QueryType = SearchQueryType.Full;
             options.SearchMode = SearchMode.Any;
-            options.Size = 2;
-            
+
             return options;
         });
 

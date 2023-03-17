@@ -1,6 +1,7 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using SearchFunction.Models;
+using System.Text.Json.Serialization;
 
 namespace SearchFunction.Services
 {
@@ -32,14 +33,21 @@ namespace SearchFunction.Services
             {
                 _searchOptions.Filter = query.FilterOptions;
             }
+
+            _searchOptions.Size = query.PageSize;
+            _searchOptions.Skip = (query.PageIndex - 1) * query.PageSize;
             
             SearchResults<T> results = await _searchClient.SearchAsync<T>(query.SearchParameter, _searchOptions);
             
-            var queryResults = new QueryResult<T>(results);
-
-            // await until content is ready for returning
-            await queryResults.CompleteAsync();
-
+            int availablePages = (int)Math.Ceiling((double)results.TotalCount / query.PageSize);
+            var queryResults = new QueryResult<T>(SearchResults: results                                               
+                                               , PageIndex: query.PageIndex
+                                               , MaxPageSize: query.PageSize                                               
+                                               , Skip: _searchOptions.Skip ?? 0
+                                               , TotalAvailablePages: availablePages
+                                               , RemainingPages: availablePages - query.PageIndex);
+            await queryResults.ProcessResultsAsync();
+            
             return queryResults;
         }
     }
