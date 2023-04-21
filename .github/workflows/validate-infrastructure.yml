@@ -2,7 +2,7 @@
 name: Validate Infrastructure
 defaults:
   run:
-    working-directory: terraform/
+    working-directory: infrastructure/terraform/
     
 # Controls when the workflow will run
 on:

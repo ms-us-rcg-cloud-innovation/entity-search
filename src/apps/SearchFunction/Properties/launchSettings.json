@@ -3,7 +3,10 @@
     "SearchFunction": {
       "commandName": "Project",
       "commandLineArgs": "--port 7241",
-      "launchBrowser": false      
+      "launchBrowser": false,
+      "environmentVariables": {
+
+      }
     }
   }
 }

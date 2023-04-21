@@ -13,14 +13,24 @@ variable "resource_group_name" {
  description = "Name of resource group"
 }
 
+variable "appstate_sa_name" {
+  type = string
+  description = "Name of Azure Storage Account for function states to deploy"
+}
+
+variable "search_function_name" {
+  type = string
+  description = "Name of Azure Search function to deploy"
+}
+
+variable "change_feed_function_name" {
+  type = string
+  description = "Name of Azure Change Feed function to deploy"
+}
+
 variable "cosmos_account_name" {
   type = string
   description = "Name of Cosmos resource to assign"
-}
-
-variable "search_service_name" {
-  type = string
-  description = "Name of the Azure service"
 }
 
 variable "database_name" {
@@ -36,6 +46,11 @@ variable "container_name" {
 variable "partition_key_path" {
   type = string
   description = "Partition key for the container. Must be in format '/<key>'. Ex: /id"
+}
+
+variable "search_service_name" {
+  type = string
+  description = "Name of the Azure service"
 }
 
 variable "index_definition_file" {

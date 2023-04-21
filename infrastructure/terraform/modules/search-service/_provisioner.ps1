@@ -2,27 +2,12 @@ param(
     [Parameter(Mandatory = $true)]    
     [string] $ServiceName,
     [Parameter(Mandatory = $true)]    
-    [string] $DefinitionFile,
+    [string] $Definition,
     [Parameter(Mandatory = $true)]    
     [ValidateSet("Index", "DataSource", "Indexer")]
     [string] $ResourceType,
     [string] $APIVersion = "2020-06-30"
 )
-
-function TryGet-FileContent([string] $FilePath, [ref] $Content) {
-    if (Test-Path -Path $FilePath) {
-        try {
-            $Content.Value = Get-Content -Path $FilePath
-            return $true
-        }
-        catch {
-            Write-Error $_
-            Exit 1
-        }
-    }
-
-    return $false
-}
 
 function Get-DefaultAzRequestHeaders {
     $headers = @{
@@ -114,33 +99,38 @@ try
 
     $serviceUri = [string]::Format("https://{0}.search.windows.net/$($endpoint)", $ServiceName)
     
-    $definition = $null
-    
     #try to read content of given file
-    if (TryGet-FileContent -FilePath $DefinitionFile -Content ([ref]$definition)) {
+    if ($null -ne $Definition) {
+        
+        #$definition = ConvertTo-Json $Definition
+    
         if($ResourceType.ToLower() -eq "datasource") {
-            $definition = $definition.Replace('%COSMOS_DB_CONNECTIONSTRING%', $env:COSMOS_DB_CONNECTIONSTRING)
+            $Definition = $Definition.Replace('%COSMOS_DB_CONNECTIONSTRING%', $env:COSMOS_DB_CONNECTIONSTRING)
         }
 
-        Write-Host $definition
+        Write-Host $Definition
 
-        $resource = Write-Output $definition | ConvertFrom-Json -Depth 15                
-        $response = $null
-        # check if index exists -- if it exists we'll perform a PUT vs POST
-                
+        $resource = $Definition | ConvertFrom-Json -Depth 15
+        Write-Host "Resource: $resource"
+        Write-Host "Name: $($resource.name)"
+        if($null -eq $resource) {
+            throw "Unable to parse definition!"
+        }
+
+        # check if index exists -- if it exists we'll perform a PUT vs POST        
         if (Assert-ResourceExists -Uri "$serviceUri/$($resource.name)?$apiVersionParam" -ServiceName $serviceName) {
             Write-Host -ForegroundColor DarkYellow "Resource $($resource.name) already exists, proceeding with update!"
-            $response = Update-AzSearchResource -Uri "$($serviceUri)/$($resource.name)?$apiVersionParam" -Definition $definition
+            $response = Update-AzSearchResource -Uri "$($serviceUri)/$($resource.name)?$apiVersionParam" -Definition $Definition
         }
         else {
             Write-Host -ForegroundColor DarkYellow "Resource $($resource.name) does not exists, creating!"
-            $response = New-AzSearchResource -Uri "$($serviceUri)?$apiVersionParam" -Definition $definition
+            $response = New-AzSearchResource -Uri "$($serviceUri)?$apiVersionParam" -Definition $Definition
         }
 
         ConvertTo-Json -InputObject $response -Depth 5
     }
     else {
-        Write-Host -ForegroundColor DarkYellow "Failed to fetch content from '$DefinitionFile'"
+        throw "No definition provided!"
     }
         
 

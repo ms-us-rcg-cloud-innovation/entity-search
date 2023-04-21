@@ -7,24 +7,40 @@ Azure Entity Search provides multiple reference implementations for performing e
 
 The asset consists of the following artifacts
 
-* Infrastructure - terraform scripts for deploying the asset using IaC [](/terraform)
-* Application - azure function used to query the search infrastructure [](/app)
-
+* Infrastructure - terraform scripts for deploying the asset using IaC [](/infrastructure/terraform)
+* Application - azure functions used to query the search infrastructure and index new content [](/src/ap)
+* Sample Search Resources - Sample data and accompanying definitions for index, indexer, and datasource [](data/search-demo/)
+* Scripts - Powershell script for populating cosmos DB with sample data
+  
 ## Core Prerequisites
 
-The following secrets must be added to the pipeline. Documentation for adding secrets specific to azure and github actions can be found [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
+* Active Azure subscription
+* Serice Principal with Contributor access
+* Azure CLI
+* Azure Functions Core Tools
+* Terraform CLI
 
-Make sure to set the scope of the permissions to the subscription. 
+### Deployment via Powershell Script
+
+In the [scripts](/scripts/) folder is a powershell setup script, [setup.ps1](/scripts/setup.ps1), that you can use to deploy all the required resources to run your own instance of entity search.  The script creates infrastructure using terraform and will use a local state file to track state. If you need to use a remote state file you can modify the script to configure your backend.  
+
+### Deployment via GitHub workflows
+
+GitHub environment must be configured prior to deployment. This includes secrets creation for the workflows and actions.  Documentation for adding the required secrets can be found [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
+
+Make sure to set the scope of the permissions to the subscription.
 
 ![](docs/images/github-secrets-list.png)
 
+To create secrets for your deployment follow [these instructions](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
+
 ### Create Secrets in the GitHub UI
 
-Follow the documentation here to create the secrets above: https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository
+Duplicate the repo that fits your requirements and policies. Make sure 
 
 ## Installation
 
-Installation is executed through github pipelines. 
+Installation is executed through github pipelines.
 
 * [bootstrap](.github/workflows/bootstrap-infrastructure.yml)
 * [validate](.github/workflows/validate-infrastructure.yml)
