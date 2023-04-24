@@ -33,7 +33,7 @@ namespace SearchFunction.Functions
         public async Task<HttpResponseData> RunAsync(
                        [HttpTrigger(AuthorizationLevel.Function
                            , "post"
-                           , Route = "product-search")] HttpRequestData req)
+                           , Route = "entity-search")] HttpRequestData req)
         {
             var response = req.CreateResponse();
             var queryRequest = await req.ReadFromJsonAsync<QueryRequest>();

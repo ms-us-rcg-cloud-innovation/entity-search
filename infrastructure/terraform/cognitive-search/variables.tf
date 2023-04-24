@@ -1,6 +1,7 @@
 variable "uniquefy" {
   type = bool
   description = "Append random string of 5 alpha-characters to specific resources to ensure global uniquness"
+  default = true
 }
 
 variable "location" {
@@ -11,26 +12,30 @@ variable "location" {
 variable "resource_group_name" {
  type = string
  description = "Name of resource group"
+ default = "azure-entity-search"
 }
 
 variable "appstate_sa_name" {
   type = string
   description = "Name of Azure Storage Account for function states to deploy"
+  default = "appstatasa"
 }
 
 variable "search_function_name" {
   type = string
-  description = "Name of Azure Search function to deploy"
+  description = "Name to assing to the search API function"
+  default =  "search-api"
 }
 
 variable "change_feed_function_name" {
   type = string
-  description = "Name of Azure Change Feed function to deploy"
+  description = "Name to assing to the change feed processor function"
+  default = "change-feed-processor"
 }
 
 variable "cosmos_account_name" {
   type = string
-  description = "Name of Cosmos resource to assign"
+  description = "Cosmos account name"
 }
 
 variable "database_name" {
@@ -45,12 +50,13 @@ variable "container_name" {
 
 variable "partition_key_path" {
   type = string
-  description = "Partition key for the container. Must be in format '/<key>'. Ex: /id"
+  description = "Partition key for Azure Search connected Comsmos DB container. Must be in format '/<key>'. Ex: /id"
 }
 
 variable "search_service_name" {
   type = string
   description = "Name of the Azure service"
+  default = "entity-search"
 }
 
 variable "index_definition_file" {

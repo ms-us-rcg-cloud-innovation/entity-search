@@ -1,5 +1,10 @@
-$tf_varfile = "demo.tfvars"
-$tf_planfile = "demo.tfplan"
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [string] $tf_varfile
+)
+
+$tf_planfile =  "entity_search.tfplan"
 $tf_output = $null
 function Submit-PromptUntilYesOrNoInput($yes_or_no_prompt, $func) {
     do {

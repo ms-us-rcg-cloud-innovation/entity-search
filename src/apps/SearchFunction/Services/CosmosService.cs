@@ -28,22 +28,5 @@ namespace SearchFunction.Services
 
             return response.Select(x => x.Resource).ToList(); ;
         }
-
-        public async Task<IEnumerable<T>> GetDocumentsByQueryAsync(IEnumerable<string> ids)
-        {
-            var query = new QueryDefinition($"SELECT * FROM {_client.Container.Id} c WHERE ARRAY_CONTAINS(@ids, c.id)")
-                                .WithParameter("@ids", ids);
-
-            List<T> dbResponse = new();
-            var feedIterator = _client.Container.GetItemQueryIterator<T>(query);
-
-            while (feedIterator.HasMoreResults)
-            {
-                var response = await feedIterator.ReadNextAsync();
-                dbResponse.AddRange(response.ToList());
-            }
-
-            return dbResponse;
-        }
     }
 }
