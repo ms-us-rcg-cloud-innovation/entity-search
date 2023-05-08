@@ -12,11 +12,11 @@ provider "azurerm" {
 }
 
 locals {
-  suffix               = var.uniquefy ? "${random_string.rand.result}" : ""
-  resource_group_name  = "${var.resource_group_name}-${local.suffix}"
-  cosmos_acccount_name = "${var.cosmos_account_name}-${local.suffix}"
-  search_service_name  = "${var.search_service_name}-${local.suffix}"
-  appstate_sa_name     = "${var.appstate_sa_name}${local.suffix}"
+  suffix               = var.uniquefy ? "-${random_string.rand.result}" : ""
+  resource_group_name  = "${var.resource_group_name}${local.suffix}"
+  cosmos_acccount_name = "${var.cosmos_account_name}${local.suffix}"
+  search_service_name  = "${var.search_service_name}${local.suffix}"
+  appstate_sa_name     = "${var.appstate_sa_name}${random_string.rand.result}"
 }
 
 resource "random_string" "rand" {
