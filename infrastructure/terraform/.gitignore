@@ -3,3 +3,4 @@
 *.lock.hcl
 *.tfstate*
 *.tfvars
+*.tfplan
